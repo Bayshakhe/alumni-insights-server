@@ -41,6 +41,29 @@ async function run() {
       res.send(result);
     });
 
+    // update students info
+    app.put("/allStudents/:id", async (req, res) => {
+      const { id } = req.params;
+      try {
+        const filter = { _id: new ObjectId(id) };
+        const updateDoc = {
+          $set: req.body,
+        };
+        const options = { upsert: true };
+
+        const result = await studentsCollections.updateOne(
+          filter,
+          updateDoc,
+          options
+        );
+        // console.log(result);
+        res.send(result);
+      } catch (error) {
+        // console.error(error);
+        res.status(400).send({ error: "Invalid ID format" });
+      }
+    });
+
     // get alumni students
     app.get("/alumniStudents", async (req, res) => {
       const query = { jobStatus: true };
@@ -68,7 +91,7 @@ async function run() {
         const result = await studentsCollections.findOne(query);
         res.send(result);
       } catch (error) {
-        console.error(error);
+        // console.error(error);
         res.status(400).send({ error: "Invalid ID format" });
       }
     });
@@ -92,7 +115,7 @@ async function run() {
       // console.log(postBody);
       const query = { email: postBody?.email, password: postBody?.password };
       const exist = await studentsCollections.findOne(query);
-      console.log(exist);
+      // console.log(exist);
       if (exist) {
         return res.send(exist);
       } else {
