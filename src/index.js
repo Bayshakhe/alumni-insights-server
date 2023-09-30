@@ -28,6 +28,8 @@ const client = new MongoClient(uri, {
 });
 
 const studentsCollections = client.db("alumni-insights").collection("students");
+const eventsCollections = client.db("alumni-insights").collection("events");
+const paymentCollections = client.db("alumni-insights").collection("payments");
 
 async function run() {
   try {
@@ -138,6 +140,20 @@ async function run() {
       }
     });
 
+    // get upcoming events
+    app.get("/upcoming-events", async (req, res) => {
+      const result = await eventsCollections.find({}).toArray();
+      res.send(result);
+    });
+    // get single event by id
+    app.get("/upcoming-events/:id", async (req, res) => {
+      const { id } = req.params;
+      const query = { _id: new ObjectId(id) };
+      const result = await eventsCollections.findOne(query);
+      res.send(result);
+    });
+
+    // create stripe payment intent
     app.post("/create-payment-intent", async (req, res) => {
       const { price } = req.body;
       const amount = price * 100;
@@ -146,10 +162,17 @@ async function run() {
         currency: "BDT",
         payment_method_types: ["card"],
       });
-
+      // console.log(paymentIntent.client_secret);=
       res.send({
         clientSecret: paymentIntent.client_secret,
       });
+    });
+
+    // post payment info
+    app.post("/payments", async (req, res) => {
+      const postBody = req.body;
+      const result = await paymentCollections.insertOne(postBody);
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
