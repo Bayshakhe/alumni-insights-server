@@ -148,9 +148,33 @@ async function run() {
     // get single event by id
     app.get("/upcoming-events/:id", async (req, res) => {
       const { id } = req.params;
-      const query = { _id: new ObjectId(id) };
-      const result = await eventsCollections.findOne(query);
+      try {
+        const objectId = new ObjectId(id);
+        const query = { _id: objectId };
+        const result = await eventsCollections.findOne(query);
+        res.send(result);
+      } catch (error) {
+        res.send(error);
+      }
+    });
+    // post upcoming events
+    app.post("/upcoming-events", async (req, res) => {
+      const postBody = req.body;
+      const result = await eventsCollections.insertOne(postBody);
       res.send(result);
+    });
+    // delete any events
+    app.delete("/upcoming-events/:id", async (req, res) => {
+      const { id } = req.params;
+      // console.log(id);
+      try {
+        const objectId = new ObjectId(id);
+        const query = { _id: objectId };
+        const result = await eventsCollections.deleteOne(query);
+        res.send(result);
+      } catch (error) {
+        res.send(error);
+      }
     });
 
     // create stripe payment intent
