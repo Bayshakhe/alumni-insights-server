@@ -175,6 +175,20 @@ async function run() {
       res.send(result);
     });
 
+    // get student payment info
+    app.get("/payments/:email", async (req, res) => {
+      const { email } = req.params;
+      const query = { email: email };
+      const result = await paymentCollections.find(query).toArray();
+      res.send(result);
+    });
+
+    // get all payment info
+    app.get("/allPayments", async (req, res) => {
+      const result = await paymentCollections.find({}).toArray();
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
     console.log(
