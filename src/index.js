@@ -4,6 +4,7 @@ require("dotenv").config();
 const stripe = require("stripe")(process.env.PAYMET_Secret_Key);
 const app = express();
 const port = process.env.PORT || 5000;
+// console.log(port);
 // const routes = require('./routes')
 
 // app.use(routes);
@@ -18,6 +19,7 @@ app.use(express.json());
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const { default: Stripe } = require("stripe");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.qlguchx.mongodb.net/?retryWrites=true&w=majority`;
+// console.log("22", process.env.DB_USER);
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
