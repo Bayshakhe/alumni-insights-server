@@ -104,6 +104,29 @@ async function run() {
       }
     });
 
+    // remove admin
+    app.put("/removeAdmin/:id", async (req, res) => {
+      const { id } = req.params;
+      // console.log(id);
+      try {
+        const query = { _id: new ObjectId(id) };
+        const updateDoc = {
+          $set: {
+            status: "",
+          },
+        };
+        const options = { upsert: true };
+        const result = await studentsCollections.updateOne(
+          query,
+          updateDoc,
+          options
+        );
+        res.send(result);
+      } catch (error) {
+        res.status(400).send({ error });
+      }
+    });
+
     // get alumni students
     app.get("/alumniStudents", async (req, res) => {
       const query = { jobStatus: true };
