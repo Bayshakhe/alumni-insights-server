@@ -45,8 +45,8 @@ async function run() {
       res.send(result);
     });
 
-    // update students info
-    app.put("/allStudents/:id", async (req, res) => {
+    // update profile info
+    app.put("/updateProfile/:id", async (req, res) => {
       const { id } = req.params;
       try {
         const filter = { _id: new ObjectId(id) };
@@ -68,7 +68,7 @@ async function run() {
       }
     });
 
-    // update students info
+    // delete student
     app.delete("/allStudents/:id", async (req, res) => {
       const { id } = req.params;
       try {
@@ -81,6 +81,29 @@ async function run() {
       }
     });
 
+    // make any student admin
+    app.put("/makeAdmin/:id", async (req, res) => {
+      const { id } = req.params;
+      // console.log(id);
+      try {
+        const query = { _id: new ObjectId(id) };
+        const updateDoc = {
+          $set: {
+            status: "admin",
+          },
+        };
+        const options = { upsert: true };
+        const result = await studentsCollections.updateOne(
+          query,
+          updateDoc,
+          options
+        );
+        res.send(result);
+      } catch (error) {
+        res.status(400).send({ error });
+      }
+    });
+
     // get alumni students
     app.get("/alumniStudents", async (req, res) => {
       const query = { jobStatus: true };
@@ -88,16 +111,6 @@ async function run() {
       // console.log(result);
       res.send(result);
     });
-
-    // get single student info
-    // app.get("/students/:id", async (req, res) => {
-    //   const id = req?.params;
-    //   // console.log(id);
-    //   const query = { _id: new ObjectId(id) };
-    //   const result = await studentsCollections.findOne(query);
-    //   // console.log(result)
-    //   res.send(result);
-    // });
 
     app.get("/students/:id", async (req, res) => {
       const { id } = req.params;
